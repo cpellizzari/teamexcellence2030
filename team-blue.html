@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Blue - TE2030</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/images/logo-te.jpg" alt="TE2030 Logo">
+        <span>TE2030</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="team-white.html">Team White</a></li>
+        <li><a href="team-blue.html" class="active">Team Blue</a></li>
+        <li><a href="coaches.html">Coaches</a></li>
+        <li><a href="stats.html">Stats</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header team-header-blue">
+    <h1>Team Blue</h1>
+    <p>Team Excellence 2030</p>
+  </div>
+
+  <div class="container">
+    <h2>Roster</h2>
+    <div class="table-wrapper" style="margin-top: 1rem;">
+      <table class="roster-table" id="roster-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+          </tr>
+        </thead>
+        <tbody id="roster-body"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    &copy; 2025 Team Excellence 2030
+  </footer>
+
+  <script src="js/roster-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tbody = document.getElementById("roster-body");
+      TEAMS.Blue.players.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${p.number}</td><td>${p.name}</td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats - TE2030</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/images/logo-te.jpg" alt="TE2030 Logo">
+        <span>TE2030</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="team-white.html">Team White</a></li>
+        <li><a href="team-blue.html">Team Blue</a></li>
+        <li><a href="coaches.html">Coaches</a></li>
+        <li><a href="stats.html" class="active">Stats</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>Player Statistics</h1>
+    <p>View team and individual player stats</p>
+  </div>
+
+  <div class="container">
+
+    <div class="stats-controls">
+      <div class="tab-group">
+        <button class="tab-btn active" data-team="White">Team White</button>
+        <button class="tab-btn" data-team="Blue">Team Blue</button>
+      </div>
+      <select class="filter-select" id="game-filter">
+        <option value="all">All Games</option>
+      </select>
+    </div>
+
+    <div class="stats-actions">
+      <a href="enter-stats.html" class="btn btn-primary">Enter New Stats</a>
+    </div>
+
+    <div id="team-summary" class="team-summary"></div>
+
+    <div id="stats-loading" class="loading">Loading stats</div>
+
+    <div id="stats-content" style="display: none;">
+      <p id="stats-label" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 500;"></p>
+      <div class="table-wrapper">
+        <table id="stats-table">
+          <thead>
+            <tr id="stats-header"></tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="no-data" class="no-data-message" style="display: none;">
+      No game data available yet. <a href="enter-stats.html">Enter your first game</a>.
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    &copy; 2025 Team Excellence 2030
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/roster-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/stats-viewer.js"></script>
+</body>
+</html>

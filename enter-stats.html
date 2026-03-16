@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Stats - TE2030</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Spreadsheet-style stat entry table */
+    .entry-table-wrapper {
+      background: #fff; border-radius: 8px; overflow-x: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+    .entry-table { border-collapse: collapse; width: 100%; min-width: 920px; }
+    .entry-table th {
+      background: var(--navy); color: #fff; padding: 8px 4px; font-size: 0.75em;
+      text-align: center; position: sticky; top: 0; white-space: nowrap;
+      cursor: default;
+    }
+    .entry-table th:hover { background: var(--navy); }
+    .entry-table th.player-col { text-align: left; padding-left: 10px; min-width: 140px; }
+    .entry-table th.num-col { min-width: 36px; }
+    .entry-table th.group-header { background: #2a4a6f; font-size: 0.7em; border-bottom: 2px solid var(--navy); }
+    .entry-table td { padding: 4px 2px; text-align: center; border-bottom: 1px solid #eee; }
+    .entry-table td.player-name {
+      text-align: left; padding-left: 10px; font-weight: 500;
+      position: sticky; left: 0; background: inherit; z-index: 1;
+    }
+    .entry-table td.player-num { font-weight: 700; text-align: center; }
+    .entry-table tbody tr:nth-child(even) { background: var(--light-blue); }
+    .entry-table tbody tr:hover { background: #d4eaf8; }
+    .entry-table tr.dnp-row { background: #f9f9f9 !important; color: #aaa; }
+    .entry-table tr.dnp-row td.player-name::after { content: ' (DNP)'; font-style: italic; font-weight: 400; }
+    .entry-table tr.guest-row td.player-name::after { content: ' (G)'; color: var(--carolina-blue); font-weight: 700; font-style: normal; }
+    .entry-table tr.guest-row.dnp-row td.player-name::after { content: ' (G, DNP)'; color: #aaa; }
+
+    .entry-table td input[type="number"] {
+      width: 40px; border: 1px solid transparent; background: transparent;
+      text-align: center; font-size: 0.9em; padding: 4px 2px; border-radius: 3px;
+    }
+    .entry-table td input[type="number"]:hover { border-color: #ddd; background: #fafafa; }
+    .entry-table td input[type="number"]:focus { outline: none; border-color: #2563eb; background: #fff; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .entry-table td input[type="number"]:disabled { background: transparent; color: #ccc; cursor: not-allowed; }
+
+    .dnp-btn {
+      cursor: pointer; padding: 2px 8px; border-radius: 4px; border: 1px solid #ddd;
+      font-size: 0.75em; background: #fff; transition: all 0.15s;
+    }
+    .dnp-btn:hover { background: #fee; border-color: #f87171; }
+    .dnp-btn.is-dnp { background: #fecaca; border-color: #f87171; color: #b91c1c; }
+
+    .remove-guest-btn {
+      cursor: pointer; padding: 2px 6px; border-radius: 4px; border: 1px solid #ddd;
+      font-size: 0.7em; background: #fff; color: #e74c3c; margin-left: 4px;
+    }
+    .remove-guest-btn:hover { background: #fee; border-color: #f87171; }
+
+    .totals-row td { font-weight: 700; background: #f0f4f8 !important; border-top: 2px solid var(--navy); }
+
+    /* Edit existing game controls */
+    .edit-controls {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+      margin-bottom: 1.5rem; padding: 1rem 1.5rem;
+      background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .edit-controls .form-group { flex: 1; min-width: 200px; }
+    .mode-tabs {
+      display: flex; border-radius: var(--radius); overflow: hidden;
+      border: 2px solid var(--navy); margin-bottom: 1.5rem;
+    }
+    .mode-tab {
+      padding: 0.6rem 1.5rem; border: none; background: var(--white);
+      color: var(--navy); font-weight: 600; font-size: 0.9rem; cursor: pointer;
+      transition: background 0.2s, color 0.2s; font-family: 'Montserrat', sans-serif;
+    }
+    .mode-tab.active { background: var(--navy); color: var(--white); }
+    .mode-tab:hover:not(.active) { background: var(--light-blue); }
+
+    /* Guest controls at bottom */
+    .guest-controls {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+      padding: 1rem 1.5rem; background: var(--white);
+      border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 1.5rem;
+    }
+    .guest-controls .form-group { flex: 1; min-width: 200px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/images/logo-te.jpg" alt="TE2030 Logo">
+        <span>TE2030</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="team-white.html">Team White</a></li>
+        <li><a href="team-blue.html">Team Blue</a></li>
+        <li><a href="coaches.html">Coaches</a></li>
+        <li><a href="stats.html">Stats</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Password Overlay -->
+  <div class="password-overlay" id="password-overlay">
+    <div class="password-modal">
+      <h2>Enter Password</h2>
+      <p>A password is required to enter game statistics.</p>
+      <input type="password" id="password-input" placeholder="Password" autocomplete="off">
+      <div class="password-error" id="password-error">Incorrect password. Please try again.</div>
+      <button class="btn btn-primary" id="password-submit" style="width: 100%;">Submit</button>
+    </div>
+  </div>
+
+  <div class="page-header">
+    <h1>Enter Game Stats</h1>
+    <p>Record or edit player statistics for a game</p>
+  </div>
+
+  <div class="container" id="entry-content" style="display: none;">
+
+    <!-- New vs Edit mode -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="mode-new">New Game</button>
+      <button class="mode-tab" id="mode-edit">Edit Existing Game</button>
+    </div>
+
+    <!-- Edit existing game selector (hidden by default) -->
+    <div class="edit-controls" id="edit-controls" style="display: none;">
+      <div class="form-group">
+        <label for="edit-game-select">Select Game to Edit</label>
+        <select id="edit-game-select" class="filter-select" style="min-width: 100%;">
+          <option value="">Loading games...</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="load-game-btn">Load Game</button>
+      <button class="btn btn-danger" id="delete-game-btn" style="display: none;">Delete Game</button>
+    </div>
+
+    <!-- Game Info -->
+    <div class="entry-form">
+      <h2 style="margin-bottom: 1rem;">Game Information</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="team-select">Team</label>
+          <select id="team-select">
+            <option value="White">Team White</option>
+            <option value="Blue">Team Blue</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="game-date">Date</label>
+          <input type="date" id="game-date">
+        </div>
+        <div class="form-group">
+          <label for="opponent">Opponent</label>
+          <input type="text" id="opponent" placeholder="e.g. HAB">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="league">League</label>
+          <input type="text" id="league" placeholder="e.g. Hoop City">
+        </div>
+        <div class="form-group">
+          <label for="score-te">TE Score</label>
+          <input type="number" id="score-te" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="score-opponent">Opponent Score</label>
+          <input type="number" id="score-opponent" min="0" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Player Stats Table -->
+    <h2 style="margin: 1.5rem 0 1rem;">Player Stats</h2>
+
+    <div class="entry-table-wrapper">
+      <table class="entry-table" id="entry-table">
+        <thead>
+          <tr>
+            <th class="num-col">#</th>
+            <th class="player-col">Player</th>
+            <th colspan="2">FG</th>
+            <th colspan="2">3PT</th>
+            <th colspan="2">FT</th>
+            <th>OREB</th>
+            <th>DREB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>JB</th>
+            <th>BLK</th>
+            <th>TO</th>
+            <th>FLS</th>
+            <th>DNP</th>
+          </tr>
+          <tr>
+            <th></th><th></th>
+            <th class="group-header">M</th><th class="group-header">A</th>
+            <th class="group-header">M</th><th class="group-header">A</th>
+            <th class="group-header">M</th><th class="group-header">A</th>
+            <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+          </tr>
+        </thead>
+        <tbody id="entry-body"></tbody>
+        <tfoot id="entry-foot"></tfoot>
+      </table>
+    </div>
+
+    <!-- Guest Player Controls (at bottom) -->
+    <div class="guest-controls">
+      <div class="form-group">
+        <label for="guest-select">Add Guest Player</label>
+        <select id="guest-select" class="filter-select" style="min-width: 100%;">
+          <option value="">Select a player from the other team...</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="add-guest-btn">Add to Roster</button>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button class="btn btn-navy" id="save-btn" style="min-width: 200px;">Save Game</button>
+      <a href="stats.html" class="btn" style="background: var(--border); color: var(--text-dark);">Cancel</a>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="success-message">
+      <h3>Game Saved Successfully!</h3>
+      <p>The game stats have been saved to the database.</p>
+      <p style="margin-top: 0.75rem;"><a href="stats.html">View Stats</a> | <a href="#" id="enter-another">Enter Another Game</a></p>
+    </div>
+
+    <!-- Import JSON Section -->
+    <div class="import-section">
+      <h3>Import from JSON</h3>
+      <p style="color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.9rem;">
+        Paste JSON output from the read-stats skill to pre-fill the form.
+      </p>
+      <textarea id="json-import" placeholder='Paste JSON here...'></textarea>
+      <button class="btn btn-primary" id="import-json-btn">Import</button>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    &copy; 2025 Team Excellence 2030
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/roster-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/stats-entry.js"></script>
+</body>
+</html>
