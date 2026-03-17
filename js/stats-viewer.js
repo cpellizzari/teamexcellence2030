@@ -1,10 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const STATS_PASSWORD_HASH = "b1988ac5e955be45b6fe16e8f019199b76d2d050ea70270d9d1c70230c371517";
-
-  async function sha256(msg) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(msg));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-  }
+  const STATS_PASSWORD_ENCODED = "VEUyMDMw";
 
   // --- Password Gate ---
   const overlay = document.getElementById("password-overlay");
@@ -12,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const pwSubmit = document.getElementById("password-submit");
   const pwError = document.getElementById("password-error");
 
-  async function checkPassword() {
-    if (await sha256(pwInput.value) === STATS_PASSWORD_HASH) {
+  function checkPassword() {
+    if (btoa(pwInput.value) === STATS_PASSWORD_ENCODED) {
       overlay.style.display = "none";
       loadGames();
     } else {

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const PASSWORD_HASH = "5bfb2ea8a6c88034f1317422bd185e1e2f728eb999c6a23e866a0d1024af34f7";
+  const PASSWORD_ENCODED = "dGVhZ2xlcw==";
 
   const STAT_KEYS = [
     "fg_made", "fg_attempted", "three_pt_made", "three_pt_attempted",
@@ -12,20 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let editingGameId = null; // null = new game, string = editing existing
   let allGames = [];        // cached games for edit mode
 
-  // SHA-256
-  async function sha256(msg) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(msg));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-  }
-
   // --- Password Gate ---
   const overlay = document.getElementById("password-overlay");
   const pwInput = document.getElementById("password-input");
   const pwSubmit = document.getElementById("password-submit");
   const pwError = document.getElementById("password-error");
 
-  async function checkPassword() {
-    if (await sha256(pwInput.value) === PASSWORD_HASH) {
+  function checkPassword() {
+    if (btoa(pwInput.value) === PASSWORD_ENCODED) {
       authenticated = true;
       overlay.style.display = "none";
       document.getElementById("entry-content").style.display = "block";
