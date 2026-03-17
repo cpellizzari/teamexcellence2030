@@ -1,4 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const STATS_PASSWORD_HASH = "b1988ac5e955be45b6fe16e8f019199b76d2d050ea70270d9d1c70230c371517";
+
+  async function sha256(msg) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  // --- Password Gate ---
+  const overlay = document.getElementById("password-overlay");
+  const pwInput = document.getElementById("password-input");
+  const pwSubmit = document.getElementById("password-submit");
+  const pwError = document.getElementById("password-error");
+
+  async function checkPassword() {
+    if (await sha256(pwInput.value) === STATS_PASSWORD_HASH) {
+      overlay.style.display = "none";
+      loadGames();
+    } else {
+      pwError.style.display = "block";
+      pwInput.value = "";
+      pwInput.focus();
+    }
+  }
+  pwSubmit.addEventListener("click", checkPassword);
+  pwInput.addEventListener("keydown", e => { if (e.key === "Enter") checkPassword(); });
+
   let allGames = [];
   let currentTeam = "White";
   let currentGameId = "all";
@@ -459,6 +485,4 @@ document.addEventListener("DOMContentLoaded", () => {
     renderStats();
   });
 
-  // Initial load
-  loadGames();
 });

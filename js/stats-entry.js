@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const PASSWORD_HASH = "b1988ac5e955be45b6fe16e8f019199b76d2d050ea70270d9d1c70230c371517";
+  const PASSWORD_HASH = "5bfb2ea8a6c88034f1317422bd185e1e2f728eb999c6a23e866a0d1024af34f7";
 
   const STAT_KEYS = [
     "fg_made", "fg_attempted", "three_pt_made", "three_pt_attempted",
