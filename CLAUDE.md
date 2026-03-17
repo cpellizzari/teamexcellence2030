@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Static website for Team Excellence 2030, a youth basketball program with two teams (White and Blue). Tracks rosters and game statistics with password-protected stat entry. No build tools or frameworks — plain HTML/CSS/vanilla JS with Firebase Firestore for persistence.
+Static website for Team Excellence 2030, a youth basketball program with two teams (White and Blue). Tracks rosters and game statistics. Both the stats viewer and stat entry pages are password-protected. No build tools or frameworks — plain HTML/CSS/vanilla JS with Firebase Firestore for persistence.
 
 ## Running Locally
 
@@ -54,7 +54,12 @@ All derived stats are computed client-side in `stats-viewer.js`:
 
 ## Password Protection
 
-Stat entry is gated by SHA-256 hash comparison (client-side only). The hash in `stats-entry.js` corresponds to password `TE2030`. To change: compute new hash with `echo -n "NEWPASS" | shasum -a 256` and update `PASSWORD_HASH`.
+Both protected pages use a synchronous `btoa` comparison (client-side only). `crypto.subtle` was avoided because it requires HTTPS, which may not always be available.
+
+- **Stats page** (`stats.html` / `stats-viewer.js`): password `TE2030`, stored as `PASSWORD_ENCODED = btoa("TE2030")` → `"VEUyMDMw"`
+- **Stat entry page** (`enter-stats.html` / `stats-entry.js`): password `teagles`, stored as `PASSWORD_ENCODED = btoa("teagles")` → `"dGVhZ2xlcw=="`
+
+To change a password: compute `btoa("NEWPASS")` in any browser console and update the corresponding `PASSWORD_ENCODED` constant.
 
 ## Color Scheme
 
