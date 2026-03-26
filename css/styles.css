@@ -194,6 +194,10 @@ a:hover { text-decoration: underline; }
   margin-top: 2rem;
 }
 
+.values-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 .card {
   background: var(--white);
   border-radius: var(--radius-lg);
@@ -322,7 +326,15 @@ th:nth-child(2) {
 }
 
 td:nth-child(2) {
-  background: inherit;
+  background: var(--white);
+}
+
+tbody tr:nth-child(even) td:nth-child(2) {
+  background: var(--light-blue);
+}
+
+tbody tr:hover td:nth-child(2) {
+  background: var(--ice-blue);
 }
 
 tbody tr:nth-child(even) {
@@ -781,6 +793,10 @@ tbody tr:hover {
 
   h1 { font-size: 1.5rem; }
   h2 { font-size: 1.25rem; }
+
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   .stats-controls {
     flex-direction: column;
