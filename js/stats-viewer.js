@@ -407,9 +407,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `${p.name}<span class="guest-badge">G</span>`
         : p.name;
 
-      // TEAM row is at index 0 in tbody; player rows start at index 1
-      const rowIdx = idx + 1;
-      const nameBg = rowIdx % 2 === 0 ? '#E1F0FB' : '#FFFFFF';
+      // TEAM row is nth-child(1); player rows start at nth-child(2), so even idx = even nth-child = light-blue
+      const nameBg = idx % 2 === 0 ? '#E1F0FB' : '#FFFFFF';
 
       tr.innerHTML = `
         <td>${p.number}</td>
