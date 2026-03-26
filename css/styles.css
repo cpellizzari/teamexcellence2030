@@ -703,6 +703,43 @@ tbody tr:hover {
   border-color: var(--carolina-blue);
 }
 
+/* ===== YouTube Card ===== */
+.youtube-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 2rem;
+  text-decoration: none;
+  color: var(--text-dark);
+  border: 2px solid var(--border);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  max-width: 420px;
+  width: 100%;
+}
+
+.youtube-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: #FF0000;
+  text-decoration: none;
+}
+
+.youtube-card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+
+.youtube-card-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
 /* ===== Coming Soon ===== */
 .coming-soon {
   text-align: center;
