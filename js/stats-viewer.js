@@ -401,15 +401,19 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.appendChild(teamRow);
     }
 
-    playerStats.forEach(p => {
+    playerStats.forEach((p, idx) => {
       const tr = document.createElement("tr");
       const nameCell = p.isGuest
         ? `${p.name}<span class="guest-badge">G</span>`
         : p.name;
 
+      // TEAM row is at index 0 in tbody; player rows start at index 1
+      const rowIdx = idx + 1;
+      const nameBg = rowIdx % 2 === 0 ? '#E1F0FB' : '#FFFFFF';
+
       tr.innerHTML = `
         <td>${p.number}</td>
-        <td>${nameCell}</td>
+        <td style="background:${nameBg}">${nameCell}</td>
         <td>${p.gp}</td>
         <td>${fmt(p.pts)}</td>
         <td>${p.fg}</td>

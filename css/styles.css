@@ -323,6 +323,7 @@ td:nth-child(2) {
 
 th:nth-child(2) {
   z-index: 2;
+  background: var(--navy);
 }
 
 td:nth-child(2) {
