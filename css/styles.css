@@ -722,8 +722,8 @@ tbody tr:hover {
 }
 
 .photo-item {
-  flex: 1 1 200px;
-  max-width: 280px;
+  flex: 0 0 auto;
+  height: 360px;
   display: block;
   border-radius: var(--radius);
   overflow: hidden;
@@ -731,8 +731,8 @@ tbody tr:hover {
 }
 
 .photo-item img {
-  width: 100%;
-  height: auto;
+  height: 100%;
+  width: auto;
   display: block;
   transition: transform 0.3s, opacity 0.3s;
 }
@@ -742,13 +742,9 @@ tbody tr:hover {
   opacity: 0.9;
 }
 
-@media (max-width: 480px) {
-  .photo-gallery {
-    gap: 0.5rem;
-  }
+@media (max-width: 600px) {
   .photo-item {
-    flex-basis: calc(50% - 0.25rem);
-    max-width: calc(50% - 0.25rem);
+    height: 160px;
   }
 }
 
