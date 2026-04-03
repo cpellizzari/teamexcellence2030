@@ -8,6 +8,79 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .game-picker { position: relative; }
+    .game-picker-btn {
+      padding: 0.6rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--navy);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      white-space: nowrap;
+    }
+    .game-picker-btn:hover { border-color: var(--carolina-blue); }
+    .game-picker-panel {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 260px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      z-index: 200;
+      padding: 0.5rem;
+    }
+    .picker-header {
+      display: flex;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .picker-action-btn {
+      padding: 0.25rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--navy);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .picker-action-btn:hover { background: var(--light-blue); }
+    .picker-list { max-height: 240px; overflow-y: auto; }
+    .picker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.25rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .picker-item:hover { background: var(--light-blue); }
+    .picker-item input[type="checkbox"] { cursor: pointer; flex-shrink: 0; }
+    .totals-toggle-btn {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid var(--carolina-blue);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--navy);
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .totals-toggle-btn.active { background: var(--carolina-blue); color: var(--white); }
+    .totals-toggle-btn:hover:not(.active) { background: var(--light-blue); }
+  </style>
 </head>
 <body>
 
@@ -51,9 +124,16 @@
         <button class="tab-btn active" data-team="White">Team White</button>
         <button class="tab-btn" data-team="Blue">Team Blue</button>
       </div>
-      <select class="filter-select" id="game-filter">
-        <option value="all">All Games</option>
-      </select>
+      <div class="game-picker">
+        <button class="game-picker-btn" id="game-picker-btn">All Games &#x25be;</button>
+        <div class="game-picker-panel" id="game-picker-panel" style="display:none">
+          <div class="picker-header">
+            <button class="picker-action-btn" id="picker-select-all">Select All</button>
+          </div>
+          <div class="picker-list" id="game-picker-list"></div>
+        </div>
+      </div>
+      <button class="totals-toggle-btn" id="totals-toggle">Show Totals</button>
     </div>
 
     <div class="stats-actions">
