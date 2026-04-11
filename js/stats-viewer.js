@@ -101,14 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function onPickerChange() {
     const checkboxes = [...document.querySelectorAll("#game-picker-list input[type=checkbox]")];
     const checked = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-    if (checked.length === 0) {
-      // Don't allow empty — revert to all
-      checkboxes.forEach(cb => { cb.checked = true; });
-      selectedGameIds = "all";
-    } else if (checked.length === checkboxes.length) {
+    if (checked.length === checkboxes.length) {
       selectedGameIds = "all";
     } else {
-      selectedGameIds = new Set(checked);
+      selectedGameIds = new Set(checked); // may be empty
     }
     updatePickerButton();
     sortCol = null;
@@ -134,6 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("picker-select-all").addEventListener("click", () => {
     document.querySelectorAll("#game-picker-list input[type=checkbox]").forEach(cb => { cb.checked = true; });
     selectedGameIds = "all";
+    updatePickerButton();
+    sortCol = null;
+    renderStats();
+  });
+
+  document.getElementById("picker-uncheck-all").addEventListener("click", () => {
+    document.querySelectorAll("#game-picker-list input[type=checkbox]").forEach(cb => { cb.checked = false; });
+    selectedGameIds = new Set();
     updatePickerButton();
     sortCol = null;
     renderStats();
@@ -273,8 +277,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (playerStats.length === 0) {
       document.getElementById("stats-content").style.display = "none";
-      document.getElementById("no-data").style.display = "block";
       document.getElementById("team-summary").innerHTML = "";
+      const noData = document.getElementById("no-data");
+      if (getTeamGames().length > 0 && getSelectedGames().length === 0) {
+        noData.textContent = "No games selected. Use the game picker above to select games.";
+      } else {
+        noData.innerHTML = 'No game data available yet. <a href="enter-stats.html">Enter your first game</a>.';
+      }
+      noData.style.display = "block";
       return;
     }
 
