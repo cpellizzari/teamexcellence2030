@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let guestPlayers = [];   // [{number, name}]
   let editingGameId = null; // null = new game, string = editing existing
   let allGames = [];        // cached games for edit mode
+  let scoreOnlyMode = false;
 
   // --- Password Gate ---
   const overlay = document.getElementById("password-overlay");
@@ -41,24 +42,57 @@ document.addEventListener("DOMContentLoaded", () => {
   function getTeam() { return document.getElementById("team-select").value; }
   function getOtherTeam() { return getTeam() === "White" ? "Blue" : "White"; }
 
-  // --- Mode Tabs (New / Edit) ---
+  // --- Mode Tabs (New / Score Only / Edit) ---
   const modeNew = document.getElementById("mode-new");
+  const modeScoreOnly = document.getElementById("mode-score-only");
   const modeEdit = document.getElementById("mode-edit");
   const editControls = document.getElementById("edit-controls");
 
-  modeNew.addEventListener("click", () => {
-    modeNew.classList.add("active");
+  function setAllTabsInactive() {
+    modeNew.classList.remove("active");
+    modeScoreOnly.classList.remove("active");
     modeEdit.classList.remove("active");
+  }
+
+  function setScoreOnlyMode(enabled) {
+    scoreOnlyMode = enabled;
+    const heading = document.getElementById("player-stats-heading");
+    const tableWrapper = document.querySelector(".entry-table-wrapper");
+    const guestControls = document.querySelector(".guest-controls");
+    const importSection = document.querySelector(".import-section");
+    const display = enabled ? "none" : "";
+    heading.style.display = display;
+    tableWrapper.style.display = display;
+    guestControls.style.display = display;
+    importSection.style.display = display;
+  }
+
+  modeNew.addEventListener("click", () => {
+    setAllTabsInactive();
+    modeNew.classList.add("active");
     editControls.style.display = "none";
     document.getElementById("delete-game-btn").style.display = "none";
     editingGameId = null;
     resetForm();
+    setScoreOnlyMode(false);
+  });
+
+  modeScoreOnly.addEventListener("click", () => {
+    setAllTabsInactive();
+    modeScoreOnly.classList.add("active");
+    editControls.style.display = "none";
+    document.getElementById("delete-game-btn").style.display = "none";
+    editingGameId = null;
+    resetForm();
+    setScoreOnlyMode(true);
+    document.getElementById("save-btn").textContent = "Save Score";
   });
 
   modeEdit.addEventListener("click", () => {
+    setAllTabsInactive();
     modeEdit.classList.add("active");
-    modeNew.classList.remove("active");
     editControls.style.display = "flex";
+    setScoreOnlyMode(false);
     populateEditDropdown();
   });
 
@@ -84,7 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const opt = document.createElement("option");
       opt.value = g.id;
       const info = g.game_info || {};
-      opt.textContent = `${info.date || "?"} — Team ${g.team} vs ${info.opponent || "?"} (${info.score_te ?? "?"}-${info.score_opponent ?? "?"})`;
+      const label = g.score_only ? " [Score Only]" : "";
+      opt.textContent = `${info.date || "?"} — Team ${g.team} vs ${info.opponent || "?"}${label} (${info.score_te ?? "?"}-${info.score_opponent ?? "?"})`;
       select.appendChild(opt);
     });
   }
@@ -336,33 +371,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Build players array from table rows
-    const rows = document.querySelectorAll("#entry-body tr");
-    const players = [];
+    // Build players array from table rows (skipped in score-only mode)
+    let players = [];
+    if (!scoreOnlyMode) {
+      const rows = document.querySelectorAll("#entry-body tr");
+      rows.forEach(tr => {
+        const isDnp = tr.classList.contains("dnp-row");
+        const playerObj = {
+          number: parseInt(tr.dataset.number),
+          name: tr.dataset.name,
+          played: !isDnp,
+          is_guest: tr.dataset.guest === "true"
+        };
 
-    rows.forEach(tr => {
-      const isDnp = tr.classList.contains("dnp-row");
-      const playerObj = {
-        number: parseInt(tr.dataset.number),
-        name: tr.dataset.name,
-        played: !isDnp,
-        is_guest: tr.dataset.guest === "true"
-      };
+        if (playerObj.is_guest) {
+          playerObj.home_team = tr.dataset.homeTeam;
+        }
 
-      if (playerObj.is_guest) {
-        playerObj.home_team = tr.dataset.homeTeam;
-      }
+        if (!isDnp) {
+          const stats = {};
+          tr.querySelectorAll("[data-stat]").forEach(inp => {
+            stats[inp.dataset.stat] = parseInt(inp.value) || 0;
+          });
+          playerObj.stats = stats;
+        }
 
-      if (!isDnp) {
-        const stats = {};
-        tr.querySelectorAll("[data-stat]").forEach(inp => {
-          stats[inp.dataset.stat] = parseInt(inp.value) || 0;
-        });
-        playerObj.stats = stats;
-      }
-
-      players.push(playerObj);
-    });
+        players.push(playerObj);
+      });
+    }
 
     const gameData = {
       team,
@@ -371,7 +407,8 @@ document.addEventListener("DOMContentLoaded", () => {
         score_te: scoreTe,
         score_opponent: scoreOpp
       },
-      players
+      players,
+      ...(scoreOnlyMode && { score_only: true })
     };
 
     try {
@@ -412,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveBtn = document.getElementById("save-btn");
     saveBtn.style.display = "inline-block";
     saveBtn.disabled = false;
-    saveBtn.textContent = "Save Game";
+    saveBtn.textContent = scoreOnlyMode ? "Save Score" : "Save Game";
 
     editingGameId = null;
     document.getElementById("delete-game-btn").style.display = "none";
@@ -423,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("game-date").value = new Date().toISOString().split("T")[0];
 
     guestPlayers = [];
-    renderTable();
+    if (!scoreOnlyMode) renderTable();
   }
 
   // --- Import JSON ---

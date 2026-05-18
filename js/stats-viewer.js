@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (playerStats.length === 0) {
       document.getElementById("stats-content").style.display = "none";
-      document.getElementById("team-summary").innerHTML = "";
+      renderSummary();
       const noData = document.getElementById("no-data");
       if (getTeamGames().length > 0 && getSelectedGames().length === 0) {
         noData.textContent = "No games selected. Use the game picker above to select games.";
